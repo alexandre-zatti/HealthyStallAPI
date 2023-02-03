@@ -1,4 +1,4 @@
-CREATE TABLE "user" (
+CREATE TABLE "person" (
       id serial PRIMARY KEY,
       username VARCHAR ( 20 ) NOT NULL,
       profile_img_path VARCHAR ( 1000 ) NOT NULL,

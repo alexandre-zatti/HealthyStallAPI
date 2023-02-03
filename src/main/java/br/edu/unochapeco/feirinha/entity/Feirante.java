@@ -1,18 +1,19 @@
 package br.edu.unochapeco.feirinha.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Getter
+@Setter
+@Entity
 public class Feirante {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +21,7 @@ public class Feirante {
 
     @ManyToOne
     @NotNull
-    private User user;
+    private Person person;
 
     @NotNull
     private Boolean active;

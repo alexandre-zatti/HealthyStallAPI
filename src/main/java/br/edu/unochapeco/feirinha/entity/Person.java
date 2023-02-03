@@ -11,10 +11,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+@Getter
+@Setter
+@Builder
+@Entity
+public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

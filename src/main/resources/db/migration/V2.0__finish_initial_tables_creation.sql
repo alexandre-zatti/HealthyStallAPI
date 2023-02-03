@@ -1,12 +1,12 @@
 CREATE TABLE "feirante" (
     id serial PRIMARY KEY,
-    user_id int NOT NULL,
+    person_id int NOT NULL,
     active bool NOT NULL,
     assign_at TIMESTAMP NOT NULL,
     revoked_at TIMESTAMP,
-    CONSTRAINT feirante_user_id_fk
-      FOREIGN KEY(user_id)
-          REFERENCES "user"(id)
+    CONSTRAINT feirante_person_id_fk
+      FOREIGN KEY(person_id)
+          REFERENCES "person"(id)
 );
 
 CREATE TABLE "product" (
@@ -32,14 +32,14 @@ CREATE TABLE "transaction_type" (
 
 CREATE TABLE "transaction" (
     id serial PRIMARY KEY,
-    user_id int NOT NULL,
+    person_id int NOT NULL,
     transaction_type_id int NOT NULL,
     product_id int,
     feirante_id int,
     created_at TIMESTAMP NOT NULL,
-    CONSTRAINT transaction_user_id_fk
-        FOREIGN KEY(user_id)
-            REFERENCES "user"(id),
+    CONSTRAINT transaction_person_id_fk
+        FOREIGN KEY(person_id)
+            REFERENCES "person"(id),
     CONSTRAINT transaction_product_id_fk
         FOREIGN KEY(product_id)
             REFERENCES "product"(id),

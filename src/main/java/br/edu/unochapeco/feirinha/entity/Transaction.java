@@ -1,15 +1,18 @@
 package br.edu.unochapeco.feirinha.entity;
 
+import br.edu.unochapeco.feirinha.enums.TransactionType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+@Builder
 @Entity
 public class Transaction {
 
@@ -19,17 +22,16 @@ public class Transaction {
 
     @ManyToOne
     @NotNull
-    private User user;
-
-    @ManyToOne
-    @NotNull
-    private TransactionType transactionType;
+    private Person person;
 
     @ManyToOne
     private Product product;
 
     @ManyToOne
     private Feirante feirante;
+
+    @Enumerated(EnumType.STRING)
+    private TransactionType transactionType;
 
     @CreationTimestamp
     private Date createdAt;
