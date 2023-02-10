@@ -93,7 +93,7 @@ public class TransactionRepositoryTests {
 
         assertThat(transactionList)
                 .hasSize(2)
-                .hasOnlyElementsOfType(Feirante.class);
+                .hasOnlyElementsOfType(Transaction.class);
 
     }
 
