@@ -4,25 +4,34 @@ import br.edu.unochapeco.feirinha.entity.Person;
 import br.edu.unochapeco.feirinha.exception.PersonNotFoundException;
 import br.edu.unochapeco.feirinha.exception.UniqueUsernameValidationException;
 import br.edu.unochapeco.feirinha.repository.PersonRepository;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.util.List;
 import java.util.Map;
 
+
 @Service
 public class PersonService {
 
     private final PersonRepository personRepository;
 
-    PersonService(PersonRepository personRepository){
+    private final Validator validator;
+
+    PersonService(PersonRepository personRepository, Validator validator){
         this.personRepository = personRepository;
+        this.validator = validator;
     }
 
-    public Person savePerson(Person newPerson) throws UniqueUsernameValidationException {
-        var person = this.personRepository.findByUsername(newPerson.getUsername());
+    private Boolean isUsernameAlreadyInUse(String username) {
+        var person = this.personRepository.findByUsername(username);
+        return person.isPresent();
+    }
 
-        if(person.isPresent()){
+    public Person createPerson(Person newPerson) throws UniqueUsernameValidationException {
+        if(this.isUsernameAlreadyInUse(newPerson.getUsername())){
             throw new UniqueUsernameValidationException();
         }
 
@@ -44,22 +53,40 @@ public class PersonService {
         throw new PersonNotFoundException();
     }
 
-    public Person updatePerson(Long id, Map<String, Object> fields) throws PersonNotFoundException, UniqueUsernameValidationException {
+    public Person updatePerson(Long id, Map<String, Object> fields)
+            throws PersonNotFoundException, UniqueUsernameValidationException, ConstraintViolationException {
+
         var person = this.getPersonById(id);
 
-        fields.forEach((key, value) -> {
-           var field = ReflectionUtils.findField(Person.class, key);
+        for (Map.Entry<String, Object> entry: fields.entrySet()) {
+            var field = ReflectionUtils.findField(Person.class, entry.getKey());
 
-           if (field != null){
-               field.setAccessible(true);
-               ReflectionUtils.setField(field, person, value);
-           }
-        });
+            if (field != null){
+                if(field.getName().equals("username") && this.isUsernameAlreadyInUse(entry.getValue().toString())){
+                    throw new UniqueUsernameValidationException();
+                }
 
-        return this.savePerson(person);
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, person, entry.getValue());
+            }
+        }
+
+        var violations = validator.validate(person);
+
+        if(!violations.isEmpty()){
+            throw new ConstraintViolationException(violations);
+        }
+
+        return this.personRepository.save(person);
     }
 
-    public void deletePerson(Long id){
+    public void deletePerson(Long id) throws PersonNotFoundException {
+        var person = this.personRepository.findById(id);
+
+        if(!person.isPresent()){
+            throw new PersonNotFoundException();
+        }
+
         this.personRepository.deleteById(id);
     }
 }
