@@ -1,5 +1,6 @@
 package br.edu.unochapeco.feirinha.handler;
 
+import br.edu.unochapeco.feirinha.exception.NoActiveFeiranteException;
 import br.edu.unochapeco.feirinha.exception.PersonNotFoundException;
 import br.edu.unochapeco.feirinha.exception.ProductNotFoundException;
 import br.edu.unochapeco.feirinha.exception.UniqueUsernameValidationException;
@@ -65,8 +66,17 @@ public class ApplicationExceptionHandler {
         return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NoActiveFeiranteException.class)
+    public ResponseEntity<Map<String, String>> handleNoActiveFeiranteException(NoActiveFeiranteException ex){
+        var errorMap = new HashMap<String, String>();
+
+        errorMap.put("Error message: ", ex.getMessage());
+
+        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex){
+    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(){
         var errorMap = new HashMap<String, String>();
 
         errorMap.put("Error message: ", "A tipagem ou formato de um dos argumentos fornecidos é inválido!");
