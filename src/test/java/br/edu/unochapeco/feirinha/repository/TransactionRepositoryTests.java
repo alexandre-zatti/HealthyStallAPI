@@ -62,7 +62,6 @@ public class TransactionRepositoryTests {
         this.transaction = Transaction.builder()
                 .person(this.person)
                 .product(this.product)
-                .feirante(this.feirante)
                 .transactionType(TransactionType.DEPOSIT)
                 .build();
 
@@ -83,7 +82,6 @@ public class TransactionRepositoryTests {
         var anotherTransaction = Transaction.builder()
                 .person(this.person)
                 .product(this.product)
-                .feirante(this.feirante)
                 .transactionType(TransactionType.DEPOSIT)
                 .build();
 

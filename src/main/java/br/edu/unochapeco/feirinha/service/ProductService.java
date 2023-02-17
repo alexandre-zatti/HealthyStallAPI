@@ -1,6 +1,7 @@
 package br.edu.unochapeco.feirinha.service;
 
 import br.edu.unochapeco.feirinha.entity.Product;
+import br.edu.unochapeco.feirinha.exception.InsuficientInventoryException;
 import br.edu.unochapeco.feirinha.exception.ProductNotFoundException;
 import br.edu.unochapeco.feirinha.exception.UniqueUsernameValidationException;
 import br.edu.unochapeco.feirinha.repository.ProductRepository;
@@ -68,12 +69,19 @@ public class ProductService {
     }
 
     public void deleteProduct(Long id) throws ProductNotFoundException {
-        var product = this.productRepository.findById(id);
+        var product = this.getProductById(id);
+        this.productRepository.deleteById(product.getId());
+    }
 
-        if(!product.isPresent()){
-            throw new ProductNotFoundException();
+    public Product withdrawFromProductInventory(Long id) throws ProductNotFoundException, InsuficientInventoryException {
+        var product = this.getProductById(id);
+
+        if (product.getInventory() - 1 < 0){
+            throw new InsuficientInventoryException();
         }
 
-        this.productRepository.deleteById(id);
+        product.setInventory(product.getInventory() - 1);
+
+        return this.productRepository.save(product);
     }
 }

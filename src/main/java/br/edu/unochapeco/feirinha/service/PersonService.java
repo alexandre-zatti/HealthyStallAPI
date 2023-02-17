@@ -1,6 +1,7 @@
 package br.edu.unochapeco.feirinha.service;
 
 import br.edu.unochapeco.feirinha.entity.Person;
+import br.edu.unochapeco.feirinha.exception.InsuficientBalanceException;
 import br.edu.unochapeco.feirinha.exception.PersonNotFoundException;
 import br.edu.unochapeco.feirinha.exception.UniqueUsernameValidationException;
 import br.edu.unochapeco.feirinha.repository.PersonRepository;
@@ -89,4 +90,25 @@ public class PersonService {
 
         this.personRepository.deleteById(id);
     }
+
+    public Person addToPersonBalace(Long id, Double value) throws PersonNotFoundException {
+        var person = this.getPersonById(id);
+
+        person.setBalance(person.getBalance() + value);
+
+        return this.personRepository.save(person);
+    }
+
+    public Person withdrawFromPersonBalace(Long id, Double value) throws PersonNotFoundException, InsuficientBalanceException {
+        var person = this.getPersonById(id);
+
+        if (person.getBalance() - value < 0){
+            throw new InsuficientBalanceException();
+        }
+
+        person.setBalance(person.getBalance() - value);
+
+        return this.personRepository.save(person);
+    }
+
 }

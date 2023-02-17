@@ -1,9 +1,6 @@
 package br.edu.unochapeco.feirinha.handler;
 
-import br.edu.unochapeco.feirinha.exception.NoActiveFeiranteException;
-import br.edu.unochapeco.feirinha.exception.PersonNotFoundException;
-import br.edu.unochapeco.feirinha.exception.ProductNotFoundException;
-import br.edu.unochapeco.feirinha.exception.UniqueUsernameValidationException;
+import br.edu.unochapeco.feirinha.exception.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,11 +73,31 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(){
+    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex){
         var errorMap = new HashMap<String, String>();
 
-        errorMap.put("Error message: ", "A tipagem ou formato de um dos argumentos fornecidos é inválido!");
+        errorMap.put("Error message: ", ex.getMessage());
 
         return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(TransactionTypeInvalidException.class)
+    public ResponseEntity<Map<String, String>> handleTransactionTypeInvalidException(TransactionTypeInvalidException ex){
+        var errorMap = new HashMap<String, String>();
+
+        errorMap.put("Error message: ", ex.getMessage());
+
+        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InsuficientBalanceException.class)
+    public ResponseEntity<Map<String, String>> handleInsuficientBalanceException(InsuficientBalanceException ex){
+        var errorMap = new HashMap<String, String>();
+
+        errorMap.put("Error message: ", ex.getMessage());
+
+        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
+    }
+
+
 }
